@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezeptliebe — Einfache Rezepte für jeden Tag</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;color:#222;background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit;cursor:pointer}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;border-bottom:1px solid #eee;position:sticky;top:0;background:#fff;z-index:100}
+.logo{font-size:22px;color:#222;cursor:pointer}.logo span{color:#E8614A}
+.nav-links{display:flex;gap:1.8rem;align-items:center}
+.nav-links a{font-size:13px;color:#666;letter-spacing:.5px}.nav-links a:hover{color:#E8614A}
+.nav-search input{padding:7px 14px;border:1px solid #ddd;border-radius:20px;font-size:12px;outline:none;width:140px}
+.nav-search input:focus{border-color:#E8614A}
+/* FOOD COLORS */
+.fi-pancake{background:linear-gradient(135deg,#FFF8E1,#FFE082)}
+.fi-pasta{background:linear-gradient(135deg,#F3E5F5,#CE93D8)}
+.fi-cake{background:linear-gradient(135deg,#FFF9C4,#FFF176)}
+.fi-salad{background:linear-gradient(135deg,#E8F5E9,#A5D6A7)}
+.fi-oats{background:linear-gradient(135deg,#FCE4EC,#F48FB1)}
+.fi-default{background:linear-gradient(135deg,#E3F2FD,#90CAF9)}
+.fi-warm{background:linear-gradient(135deg,#FBE9E7,#FFAB91)}
+.fi-green{background:linear-gradient(135deg,#F1F8E9,#C5E1A5)}
+.fi-purple{background:linear-gradient(135deg,#EDE7F6,#B39DDB)}
+.fi-yellow{background:linear-gradient(135deg,#FFFDE7,#FFF59D)}
+.food-box{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+/* HERO */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:420px}
+.hero-text{padding:4rem 3rem;display:flex;flex-direction:column;justify-content:center}
+.hero-tag{font-size:11px;letter-spacing:3px;color:#E8614A;text-transform:uppercase;margin-bottom:1rem;font-family:sans-serif}
+.hero h1{font-size:34px;line-height:1.25;margin-bottom:1rem;font-weight:normal}
+.hero p{font-size:15px;color:#555;margin-bottom:2rem;line-height:1.8}
+.btn-main{display:inline-block;background:#E8614A;color:#fff;padding:12px 28px;border-radius:4px;font-size:13px;font-family:sans-serif;cursor:pointer;border:none}
+.btn-main:hover{background:#d4503a}
+.hero-visual{overflow:hidden;position:relative}
+.hero-visual img{width:100%;height:100%;object-fit:cover}
+.hero-visual .hero-fallback{width:100%;height:100%;background:linear-gradient(135deg,#FFF3E0,#FFE0B2);display:flex;align-items:center;justify-content:center;font-size:100px}
+/* CATEGORIES */
+.cats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #eee;border-bottom:1px solid #eee}
+.cat{padding:1.5rem;text-align:center;border-right:1px solid #eee;cursor:pointer;transition:.2s;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cat:last-child{border-right:none}.cat:hover{background:#fafafa}
+.cat-icon{font-size:26px;margin-bottom:6px}
+.cat-name{font-size:14px;font-weight:bold;font-family:sans-serif;margin-bottom:2px}
+.cat-count{font-size:11px;color:#999;font-family:sans-serif}
+/* SECTION */
+.section{padding:2.5rem 3rem}
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8rem;border-bottom:1px solid #eee;padding-bottom:1rem}
+.sec-title{font-size:19px;font-weight:normal}
+.sec-link{font-size:12px;color:#E8614A;font-family:sans-serif;cursor:pointer}
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.8rem}
+.card{cursor:pointer}.card:hover .card-title{color:#E8614A}
+.card-img{height:165px;border-radius:6px;overflow:hidden;margin-bottom:.8rem;position:relative}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-img .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px}
+.card-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#E8614A;font-family:sans-serif;margin-bottom:5px}
+.card-title{font-size:14px;margin-bottom:5px;transition:.2s;line-height:1.4}
+.card-meta{font-size:11px;color:#999;font-family:sans-serif}
+/* FEATURED */
+.featured-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:2rem}
+.fc{cursor:pointer}.fc:hover .ft{color:#E8614A}
+.fimg{height:280px;border-radius:6px;overflow:hidden;margin-bottom:1rem;position:relative}
+.fimg img{width:100%;height:100%;object-fit:cover}
+.fimg .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:72px}
+.ft{font-size:20px;margin-bottom:6px;transition:.2s;line-height:1.3}
+.side-cards{display:flex;flex-direction:column;gap:1rem}
+.sc{display:flex;gap:1rem;cursor:pointer}.sc:hover .st{color:#E8614A}
+.simg{width:85px;height:85px;border-radius:6px;overflow:hidden;flex-shrink:0;position:relative}
+.simg img{width:100%;height:100%;object-fit:cover}
+.simg .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px}
+.si{display:flex;flex-direction:column;justify-content:center}
+.stag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#E8614A;font-family:sans-serif;margin-bottom:3px}
+.st{font-size:13px;margin-bottom:3px;transition:.2s;line-height:1.3}
+.sm{font-size:11px;color:#999;font-family:sans-serif}
+/* AD */
+.ad{margin:0 3rem;padding:12px;background:#fafafa;border:1px dashed #ddd;text-align:center;font-size:10px;color:#bbb;letter-spacing:2px;font-family:sans-serif}
+/* TOP */
+.top-list{display:flex;flex-direction:column}
+.ti{display:flex;align-items:center;gap:1.5rem;padding:1rem 0;border-bottom:1px solid #eee;cursor:pointer}
+.ti:hover .tt{color:#E8614A}
+.tn{font-size:26px;color:#E8614A;font-family:sans-serif;min-width:36px;font-weight:bold}
+.timg{width:66px;height:66px;border-radius:6px;overflow:hidden;flex-shrink:0;position:relative}
+.timg img{width:100%;height:100%;object-fit:cover}
+.timg .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px}
+.tinfo{flex:1}
+.ttag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999;font-family:sans-serif;margin-bottom:3px}
+.tt{font-size:14px;margin-bottom:3px;transition:.2s}
+.tm{font-size:11px;color:#bbb;font-family:sans-serif}
+/* NEWSLETTER */
+.newsletter{background:#FDF5F0;padding:3.5rem 3rem;text-align:center}
+.newsletter h2{font-size:24px;font-weight:normal;margin-bottom:.8rem}
+.newsletter p{font-size:14px;color:#666;margin-bottom:1.8rem}
+.nl-form{display:flex;gap:10px;justify-content:center;max-width:400px;margin:0 auto}
+.nl-form input{flex:1;padding:11px 14px;border:1px solid #ddd;border-radius:4px;font-size:13px;outline:none}
+/* FOOTER */
+footer{background:#222;color:#aaa;padding:3rem}
+.fg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2rem}
+.fl{font-size:20px;color:#fff;margin-bottom:1rem;font-family:Georgia,serif}.fl span{color:#E8614A}
+.fd{font-size:13px;line-height:1.7}
+.fc2 h4{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#fff;font-family:sans-serif;margin-bottom:1rem}
+.fc2 a{display:block;font-size:13px;color:#aaa;margin-bottom:7px;font-family:sans-serif}
+.fc2 a:hover{color:#E8614A}
+.fb2{border-top:1px solid #333;padding-top:1.5rem;display:flex;justify-content:space-between;font-size:12px;font-family:sans-serif}
+/* RECIPE PAGE */
+#pgRecipe{display:none;max-width:820px;margin:0 auto;padding:3rem}
+.back{font-size:13px;color:#E8614A;font-family:sans-serif;cursor:pointer;margin-bottom:2rem;display:inline-flex;align-items:center;gap:6px}
+.rtag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E8614A;font-family:sans-serif;margin-bottom:1rem}
+.rtitle{font-size:36px;font-weight:normal;margin-bottom:1rem;line-height:1.2}
+.rdesc{font-size:15px;color:#555;line-height:1.8;margin-bottom:1.5rem}
+.rstats{display:flex;gap:2rem;padding:1.4rem 0;border-top:1px solid #eee;border-bottom:1px solid #eee;margin-bottom:2rem}
+.rs{text-align:center;font-family:sans-serif}
+.rsn{font-size:18px;color:#E8614A;font-weight:bold}
+.rsl{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:1px}
+.rimg{width:100%;height:380px;border-radius:8px;overflow:hidden;margin-bottom:2.5rem}
+.rimg img{width:100%;height:100%;object-fit:cover}
+.rimg .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:100px}
+.rbody{display:grid;grid-template-columns:1fr 2fr;gap:3rem}
+.rbody h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;font-family:sans-serif;margin-bottom:1.2rem}
+.ing-list{list-style:none}
+.ing-list li{padding:7px 0;border-bottom:1px solid #eee;font-size:13px;color:#444}
+.step-list{list-style:none;counter-reset:s}
+.step-list li{counter-increment:s;padding:0 0 1.4rem 2.8rem;position:relative;font-size:14px;color:#444;line-height:1.8}
+.step-list li::before{content:counter(s);position:absolute;left:0;top:2px;width:22px;height:22px;background:#E8614A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:sans-serif;font-weight:bold}
+/* LOADING */
+.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:sk 1.5s infinite;border-radius:4px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.empty-state{text-align:center;padding:4rem;color:#bbb;font-family:sans-serif}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo" onclick="goHome()" id="navLogo">Rezept<span>liebe</span></span>
+  <div class="nav-links">
+    <a onclick="filterCat('Frühstück')">Frühstück</a>
+    <a onclick="filterCat('Hauptgerichte')">Hauptgerichte</a>
+    <a onclick="filterCat('Desserts')">Desserts</a>
+  </div>
+  <div class="nav-search">
+    <input type="text" placeholder="Rezept suchen..." oninput="handleSearch(this.value)">
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="pgHome">
+  <div class="hero">
+    <div class="hero-text">
+      <p class="hero-tag" id="heroTag">Einfach. Lecker. Für jeden Tag.</p>
+      <h1 id="heroTitle">Kochen mit Liebe — Rezepte die wirklich gelingen</h1>
+      <p id="heroSub">Von schnellen Alltagsgerichten bis zu besonderen Wochenendspeisen — hier findest du Rezepte die immer funktionieren.</p>
+      <button class="btn-main" onclick="document.getElementById('recipesSection').scrollIntoView({behavior:'smooth'})">Rezepte entdecken</button>
+    </div>
+    <div class="hero-visual" id="heroVisual">
+      <div class="hero-fallback">🍳</div>
+    </div>
+  </div>
+
+  <div class="cats">
+    <div class="cat" onclick="filterCat('Frühstück')">
+      <div class="cat-icon">🥞</div>
+      <div class="cat-name">Frühstück</div>
+      <div class="cat-count" id="cntFr">— Rezepte</div>
+    </div>
+    <div class="cat" onclick="filterCat('Hauptgerichte')">
+      <div class="cat-icon">🍽️</div>
+      <div class="cat-name">Hauptgerichte</div>
+      <div class="cat-count" id="cntHa">— Rezepte</div>
+    </div>
+    <div class="cat" onclick="filterCat('Desserts')">
+      <div class="cat-icon">🍰</div>
+      <div class="cat-name">Desserts</div>
+      <div class="cat-count" id="cntDe">— Rezepte</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><span class="sec-title">Empfehlung der Woche</span></div>
+    <div id="featuredGrid"></div>
+  </div>
+
+  <div class="ad">WERBUNG · GOOGLE ADSENSE</div>
+
+  <div class="section" id="recipesSection">
+    <div class="sec-head">
+      <span class="sec-title" id="secTitle">Alle Rezepte</span>
+      <span class="sec-link" id="showAllBtn" style="display:none" onclick="showAll()">Alle anzeigen</span>
+    </div>
+    <div class="cards" id="recipeCards"></div>
+  </div>
+
+  <div class="section" style="background:#fafafa">
+    <div class="sec-head"><span class="sec-title">Beliebteste Rezepte</span></div>
+    <div class="top-list" id="topList"></div>
+  </div>
+
+  <div class="newsletter">
+    <h2>Jede Woche neue Rezepte</h2>
+    <p>Direkt in dein Postfach — kein Spam, nur leckere Ideen.</p>
+    <div class="nl-form">
+      <input type="email" placeholder="Deine E-Mail-Adresse">
+      <button class="btn-main">Anmelden</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="fg">
+      <div><div class="fl">Rezept<span>liebe</span></div><p class="fd">Einfache und leckere Rezepte für jeden Tag — von Frühstück bis Dessert. Kochen macht Spaß wenn die Rezepte wirklich funktionieren.</p></div>
+      <div class="fc2"><h4>Kategorien</h4><a onclick="filterCat('Frühstück')">Frühstück</a><a onclick="filterCat('Hauptgerichte')">Hauptgerichte</a><a onclick="filterCat('Desserts')">Desserts</a></div>
+      <div class="fc2"><h4>Info</h4><a>Über uns</a><a>Kontakt</a><a>Newsletter</a></div>
+      <div class="fc2"><h4>Rechtliches</h4><a>Impressum</a><a>Datenschutz</a><a>Cookie-Richtlinie</a></div>
+    </div>
+    <div class="fb2"><span>© 2026 Rezeptliebe</span><span>Mit ❤️ gekocht</span></div>
+  </footer>
+</div>
+
+<!-- RECIPE PAGE -->
+<div id="pgRecipe">
+  <span class="back" onclick="goHome()">← Zurück zur Startseite</span>
+  <div id="recipeContent"></div>
+</div>
+
+<script>
+const SB_URL='https://csoupvuriwhulgbpvzhv.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzb3VwdnVyaXdodWxnYnB2emh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNDQ4MDQsImV4cCI6MjA5MjcyMDgwNH0.oN39s5GF-PyGzsbqI68Oynsk3qdviOYpsJI6XfNeXIM';
+const HDR={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+let allRecipes=[];
+
+async function loadRecipes(){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/recipes?order=created_at.desc`,{headers:HDR});
+    allRecipes=r.ok?await r.json():[];
+  }catch(e){allRecipes=[];}
+  renderAll();
+  loadSiteSettings();
+}
+
+function loadSiteSettings(){
+  const hero=localStorage.getItem('heroImg');
+  if(hero){
+    document.getElementById('heroVisual').innerHTML=`<img src="${hero}" alt="Hero">`;
+  }
+  const name=localStorage.getItem('blogName');
+  const sub=localStorage.getItem('blogSub');
+  if(name){
+    const parts=name.match(/^(.+?)(liebe|küche|kochen)?$/i);
+    document.getElementById('navLogo').innerHTML=name;
+  }
+}
+
+// IMAGE HELPER
+function imgDiv(r,size=48,cls=''){
+  if(r.image_url) return `<img src="${r.image_url}" alt="${r.title}" style="width:100%;height:100%;object-fit:cover">`;
+  return `<div class="fb ${r.fi||'fi-default'} ${cls}" style="font-size:${size}px">${r.emoji||'🍽️'}</div>`;
+}
+
+function renderAll(){
+  renderFeatured();
+  renderCards(allRecipes);
+  renderTop();
+  updateCounts();
+}
+
+function updateCounts(){
+  document.getElementById('cntFr').textContent=allRecipes.filter(r=>r.tag==='Frühstück').length+' Rezepte';
+  document.getElementById('cntHa').textContent=allRecipes.filter(r=>r.tag==='Hauptgerichte').length+' Rezepte';
+  document.getElementById('cntDe').textContent=allRecipes.filter(r=>r.tag==='Desserts').length+' Rezepte';
+}
+
+function renderFeatured(){
+  const fg=document.getElementById('featuredGrid');
+  if(!allRecipes.length){fg.innerHTML='<div class="empty-state">Noch keine Rezepte vorhanden.</div>';return;}
+  const main=allRecipes[0], sides=allRecipes.slice(1,5);
+  fg.innerHTML=`
+    <div class="featured-grid">
+      <div class="fc" onclick="openRecipe('${main.id}')">
+        <div class="fimg">${imgDiv(main,70)}</div>
+        <div class="card-tag">${main.tag}</div>
+        <div class="ft">${main.title}</div>
+        <div class="card-meta" style="margin-top:5px">${main.time||''} · ${main.diff||''}</div>
+      </div>
+      <div class="side-cards">${sides.map(r=>`
+        <div class="sc" onclick="openRecipe('${r.id}')">
+          <div class="simg">${imgDiv(r,26)}</div>
+          <div class="si"><div class="stag">${r.tag}</div><div class="st">${r.title}</div><div class="sm">${r.time||''}</div></div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderCards(list){
+  const c=document.getElementById('recipeCards');
+  if(!list.length){c.innerHTML='<div class="empty-state">Keine Rezepte gefunden.</div>';return;}
+  c.innerHTML=list.map(r=>`
+    <div class="card" onclick="openRecipe('${r.id}')">
+      <div class="card-img">${imgDiv(r,46)}</div>
+      <div class="card-tag">${r.tag}</div>
+      <div class="card-title">${r.title}</div>
+      <div class="card-meta">${r.time||''} · ${r.diff||''}</div>
+    </div>`).join('');
+}
+
+function renderTop(){
+  const tl=document.getElementById('topList');
+  if(!allRecipes.length){tl.innerHTML='';return;}
+  tl.innerHTML=allRecipes.slice(0,3).map((r,i)=>`
+    <div class="ti" onclick="openRecipe('${r.id}')">
+      <span class="tn">0${i+1}</span>
+      <div class="timg">${imgDiv(r,22)}</div>
+      <div class="tinfo">
+        <div class="ttag">${r.tag}</div>
+        <div class="tt">${r.title}</div>
+        <div class="tm">${r.time||''} · ${r.diff||''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function showAll(){
+  renderCards(allRecipes);
+  document.getElementById('secTitle').textContent='Alle Rezepte';
+  document.getElementById('showAllBtn').style.display='none';
+}
+
+function filterCat(cat){
+  goHome();
+  renderCards(allRecipes.filter(r=>r.tag===cat));
+  document.getElementById('secTitle').textContent=cat;
+  document.getElementById('showAllBtn').style.display='inline';
+  setTimeout(()=>document.getElementById('recipesSection').scrollIntoView({behavior:'smooth'}),100);
+}
+
+function handleSearch(val){
+  if(!val){renderCards(allRecipes);document.getElementById('secTitle').textContent='Alle Rezepte';return;}
+  const q=val.toLowerCase();
+  renderCards(allRecipes.filter(r=>r.title.toLowerCase().includes(q)||r.tag.toLowerCase().includes(q)));
+  document.getElementById('secTitle').textContent=`Suche: "${val}"`;
+  document.getElementById('showAllBtn').style.display='inline';
+}
+
+function openRecipe(id){
+  const r=allRecipes.find(x=>x.id==id);
+  if(!r) return;
+  document.getElementById('pgHome').style.display='none';
+  document.getElementById('pgRecipe').style.display='block';
+  const ings=Array.isArray(r.ingredients)?r.ingredients:[];
+  const steps=Array.isArray(r.steps)?r.steps:[];
+  document.getElementById('recipeContent').innerHTML=`
+    <div class="rtag">${r.tag}</div>
+    <h1 class="rtitle">${r.title}</h1>
+    <p class="rdesc">${r.description||''}</p>
+    <div class="rstats">
+      <div class="rs"><div class="rsn">${r.time||'?'}</div><div class="rsl">Zeit</div></div>
+      <div class="rs"><div class="rsn">${r.portions||'?'}</div><div class="rsl">Portionen</div></div>
+      <div class="rs"><div class="rsn">${r.diff||'?'}</div><div class="rsl">Schwierigkeit</div></div>
+    </div>
+    <div class="rimg">${imgDiv(r,100)}</div>
+    <div class="rbody">
+      <div><h3>Zutaten</h3><ul class="ing-list">${ings.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+      <div><h3>Zubereitung</h3><ol class="step-list">${steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>
+    </div>`;
+  window.scrollTo(0,0);
+}
+
+function goHome(){
+  document.getElementById('pgHome').style.display='';
+  document.getElementById('pgRecipe').style.display='none';
+  window.scrollTo(0,0);
+}
+
+loadRecipes();
+</script>
+</body>
+</html>
