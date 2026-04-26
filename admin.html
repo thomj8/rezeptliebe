@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezeptliebe — Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f0f1;color:#1d2327;font-size:14px}
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f0f0f1}
+.login-logo{font-family:Georgia,serif;font-size:28px;margin-bottom:2rem;color:#1d2327}.login-logo span{color:#E8614A}
+.login-box{background:#fff;border:1px solid #c3c4c7;border-radius:4px;padding:2.5rem;width:100%;max-width:360px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.login-box h2{font-size:16px;margin-bottom:1.5rem;text-align:center;color:#1d2327}
+.login-box input{width:100%;padding:10px 12px;border:1px solid #8c8f94;border-radius:4px;font-size:14px;outline:none;margin-bottom:1rem;background:#fff}
+.login-box input:focus{border-color:#2271b1;box-shadow:0 0 0 1px #2271b1}
+.login-err{font-size:13px;color:#d63638;margin-bottom:1rem;display:none;background:#fcf0f1;padding:8px 12px;border-left:4px solid #d63638;border-radius:0 4px 4px 0}
+.btn-login{width:100%;background:#2271b1;color:#fff;border:none;padding:10px;border-radius:4px;font-size:14px;cursor:pointer;font-weight:500}
+.btn-login:hover{background:#135e96}
+.login-hint{font-size:12px;color:#8c8f94;margin-top:1.2rem;text-align:center}
+/* WP LAYOUT */
+#wpadminbar{background:#1d2327;height:32px;display:flex;align-items:center;padding:0 1rem;position:fixed;top:0;left:0;right:0;z-index:200}
+#wpadminbar .site-name{color:#a7aaad;font-size:13px}.site-name span{color:#E8614A}
+#wpadminbar .ab-right{margin-left:auto;display:flex;align-items:center;gap:1rem}
+#wpadminbar a{color:#a7aaad;font-size:13px;cursor:pointer}.adminbar a:hover{color:#fff}
+.wp-wrap{display:flex;margin-top:32px;min-height:calc(100vh - 32px)}
+/* SIDEBAR */
+#adminmenu{width:160px;background:#1d2327;flex-shrink:0;padding:1rem 0;position:fixed;top:32px;left:0;bottom:0;overflow-y:auto}
+.menu-item{display:flex;align-items:center;gap:8px;padding:.7rem 1rem;font-size:13px;color:#a7aaad;cursor:pointer;transition:.15s;white-space:nowrap}
+.menu-item:hover{background:#2c3338;color:#fff}
+.menu-item.current{background:#2271b1;color:#fff}
+.menu-item .dashicon{font-size:15px;width:18px;text-align:center}
+.menu-sep{height:1px;background:#2c3338;margin:.5rem 0}
+/* MAIN */
+#wpcontent{margin-left:160px;padding:2rem;flex:1}
+.wrap{max-width:1200px}
+/* WP HEADER */
+.wp-heading-inline{font-size:23px;font-weight:400;color:#1d2327;margin-right:1rem}
+.page-title-action{background:#2271b1;color:#fff;border:none;padding:6px 14px;border-radius:3px;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+.page-title-action:hover{background:#135e96}
+/* NOTICES */
+.notice{background:#fff;border:1px solid #c3c4c7;border-left:4px solid #72aee6;padding:12px 16px;margin:1rem 0;border-radius:0 4px 4px 0;display:none}
+.notice.success{border-left-color:#00a32a}
+.notice.error{border-left-color:#d63638}
+.notice p{margin:0;font-size:13px}
+/* DASHBOARD */
+.dashboard-widgets{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin:1.5rem 0}
+.dash-widget{background:#fff;border:1px solid #c3c4c7;border-radius:4px;padding:1.5rem;text-align:center}
+.dash-widget-num{font-size:32px;font-weight:700;color:#2271b1}
+.dash-widget-label{font-size:12px;color:#646970;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+/* TABLE */
+.wp-list-table{width:100%;background:#fff;border:1px solid #c3c4c7;border-radius:4px;border-collapse:collapse;margin-top:1rem}
+.wp-list-table th{background:#f6f7f7;padding:10px 16px;text-align:left;font-size:13px;font-weight:600;color:#1d2327;border-bottom:1px solid #c3c4c7}
+.wp-list-table td{padding:10px 16px;font-size:13px;border-bottom:1px solid #f0f0f1;vertical-align:middle}
+.wp-list-table tr:last-child td{border-bottom:none}
+.wp-list-table tr:hover td{background:#f6f7f7}
+.row-actions{font-size:12px;color:#646970;margin-top:4px;display:none}
+.wp-list-table tr:hover .row-actions{display:block}
+.row-actions span{margin-right:8px}
+.row-actions a{color:#2271b1;cursor:pointer}.row-actions a:hover{color:#d63638}
+.row-actions .trash a{color:#d63638}
+.cat-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:500}
+.cat-fr{background:#fff3cd;color:#856404}
+.cat-ha{background:#e8d5f5;color:#5b21b6}
+.cat-de{background:#d1fae5;color:#065f46}
+/* POST EDITOR */
+.post-new-php{background:#f0f0f1}
+.editor-wrap{display:grid;grid-template-columns:1fr 280px;gap:1.5rem;align-items:start;margin-top:1rem}
+/* TITLE */
+.editor-title input{width:100%;padding:12px 16px;font-size:24px;font-family:Georgia,serif;border:1px solid #c3c4c7;border-radius:4px;background:#fff;outline:none;color:#1d2327}
+.editor-title input:focus{border-color:#2271b1}
+/* TOOLBAR */
+.wp-editor-toolbar{background:#f6f7f7;border:1px solid #c3c4c7;border-bottom:none;border-radius:4px 4px 0 0;padding:6px 8px;display:flex;flex-wrap:wrap;gap:2px}
+.toolbar-btn{background:#fff;border:1px solid #c3c4c7;border-radius:3px;padding:4px 8px;font-size:13px;cursor:pointer;color:#1d2327;min-width:28px;text-align:center;transition:.1s}
+.toolbar-btn:hover{background:#2271b1;color:#fff;border-color:#2271b1}
+.toolbar-sep{width:1px;background:#c3c4c7;margin:0 4px;align-self:stretch}
+.toolbar-label{font-size:12px;color:#646970;padding:4px 6px;align-self:center}
+/* EDITOR */
+#richEditor{min-height:400px;background:#fff;border:1px solid #c3c4c7;border-radius:0 0 4px 4px;padding:1.5rem;font-size:15px;font-family:Georgia,serif;line-height:1.8;outline:none;color:#1d2327}
+#richEditor:focus{border-color:#2271b1}
+#richEditor h2{font-size:22px;font-weight:600;margin:1.5rem 0 .8rem;color:#1d2327}
+#richEditor h3{font-size:18px;font-weight:600;margin:1.2rem 0 .6rem;color:#1d2327}
+#richEditor p{margin-bottom:1rem}
+#richEditor ul,#richEditor ol{margin:0 0 1rem 1.5rem}
+#richEditor li{margin-bottom:.4rem}
+#richEditor img{max-width:100%;border-radius:4px;margin:1rem 0}
+#richEditor blockquote{border-left:4px solid #2271b1;padding:.8rem 1.2rem;margin:1rem 0;background:#f6f7f7;font-style:italic;border-radius:0 4px 4px 0}
+/* METABOXES */
+.postbox{background:#fff;border:1px solid #c3c4c7;border-radius:4px;margin-bottom:1.2rem}
+.postbox-header{padding:10px 14px;border-bottom:1px solid #c3c4c7;display:flex;justify-content:space-between;align-items:center}
+.postbox-header h2{font-size:14px;font-weight:600;color:#1d2327}
+.postbox-body{padding:14px}
+.postbox label{display:block;font-size:12px;font-weight:600;color:#1d2327;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.postbox input,.postbox select,.postbox textarea{width:100%;padding:8px 10px;border:1px solid #8c8f94;border-radius:4px;font-size:13px;outline:none;margin-bottom:12px;background:#fff;color:#1d2327}
+.postbox input:focus,.postbox select:focus{border-color:#2271b1;box-shadow:0 0 0 1px #2271b1}
+.postbox textarea{resize:vertical;min-height:80px;font-family:Georgia,serif}
+/* COVER IMAGE */
+.cover-upload{border:2px dashed #c3c4c7;border-radius:4px;padding:1.5rem;text-align:center;cursor:pointer;position:relative;transition:.2s;background:#f6f7f7}
+.cover-upload:hover{border-color:#2271b1;background:#f0f6fc}
+.cover-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.cover-upload-icon{font-size:28px;margin-bottom:6px}
+.cover-upload-text{font-size:12px;color:#646970}
+.cover-preview{width:100%;border-radius:4px;margin-top:10px;display:none;max-height:160px;object-fit:cover}
+.btn-remove-img{width:100%;background:none;border:1px solid #d63638;color:#d63638;padding:6px;border-radius:4px;font-size:12px;cursor:pointer;margin-top:6px;display:none}
+.btn-remove-img:hover{background:#d63638;color:#fff}
+/* EMOJI & COLOR */
+.emoji-grid{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.ep{font-size:18px;cursor:pointer;padding:4px;border-radius:4px;border:2px solid transparent;transition:.1s}
+.ep:hover,.ep.sel{border-color:#2271b1;background:#f0f6fc}
+.color-grid{display:flex;gap:6px;flex-wrap:wrap}
+.cp{width:26px;height:26px;border-radius:4px;cursor:pointer;border:2px solid transparent}
+.cp.sel{border-color:#1d2327}
+/* DL */
+.dl{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.dl-item{display:flex;gap:6px;align-items:center}
+.dl-item input{flex:1;padding:7px 10px;border:1px solid #8c8f94;border-radius:4px;font-size:13px;outline:none}
+.dl-item input:focus{border-color:#2271b1}
+.dl-rm{background:none;border:none;color:#c3c4c7;font-size:18px;cursor:pointer;line-height:1;padding:0 4px}
+.dl-rm:hover{color:#d63638}
+.btn-add-row{background:none;border:1px dashed #c3c4c7;color:#646970;padding:6px;border-radius:4px;font-size:12px;cursor:pointer;width:100%}
+.btn-add-row:hover{border-color:#2271b1;color:#2271b1}
+/* PUBLISH BOX */
+.publish-actions{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid #c3c4c7;margin-top:10px}
+.btn-publish{background:#2271b1;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-size:13px;cursor:pointer;font-weight:500}
+.btn-publish:hover{background:#135e96}
+.btn-draft{background:none;border:1px solid #8c8f94;color:#646970;padding:7px 14px;border-radius:4px;font-size:13px;cursor:pointer}
+.btn-draft:hover{border-color:#1d2327;color:#1d2327}
+/* PREVIEW */
+.preview-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;overflow-y:auto}
+.preview-wrap{max-width:800px;margin:2rem auto;background:#fff;border-radius:8px;overflow:hidden}
+.preview-bar{background:#1d2327;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.preview-bar span{color:#a7aaad;font-size:13px}
+.preview-bar button{background:#d63638;color:#fff;border:none;padding:6px 14px;border-radius:3px;font-size:12px;cursor:pointer}
+.preview-content{padding:3rem}
+.preview-content h1{font-size:32px;font-weight:normal;font-family:Georgia,serif;margin-bottom:1rem;line-height:1.3}
+.preview-content .meta{font-size:13px;color:#646970;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #eee}
+.preview-content .cover{width:100%;max-height:400px;object-fit:cover;border-radius:4px;margin-bottom:2rem}
+.preview-content .body{font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1d2327}
+.preview-content .body h2{font-size:22px;margin:1.5rem 0 .8rem}
+.preview-content .body h3{font-size:18px;margin:1.2rem 0 .6rem}
+.preview-content .body p{margin-bottom:1rem}
+.preview-content .body img{max-width:100%;border-radius:4px;margin:1rem 0}
+.preview-content .body blockquote{border-left:4px solid #2271b1;padding:.8rem 1.2rem;margin:1rem 0;background:#f6f7f7;font-style:italic}
+.preview-content .body ul,.preview-content .body ol{margin:0 0 1rem 1.5rem}
+/* TABS */
+.nav-tab-wrapper{border-bottom:1px solid #c3c4c7;margin-bottom:1.5rem}
+.nav-tab{display:inline-block;padding:8px 16px;font-size:13px;color:#646970;cursor:pointer;border:1px solid transparent;border-bottom:none;margin-bottom:-1px;border-radius:4px 4px 0 0}
+.nav-tab:hover{color:#1d2327}
+.nav-tab.active{background:#fff;border-color:#c3c4c7;color:#1d2327;font-weight:500}
+.tab-content{display:none}.tab-content.active{display:block}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="pgLogin">
+  <div class="login-wrap">
+    <div class="login-logo">Rezept<span>liebe</span></div>
+    <div class="login-box">
+      <h2>Anmelden</h2>
+      <input type="text" id="loginUser" placeholder="Benutzername" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="loginPass" placeholder="Passwort" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="login-err" id="loginErr"><p>❌ Falscher Benutzername oder Passwort</p></div>
+      <button class="btn-login" onclick="doLogin()">Anmelden</button>
+      <div class="login-hint">admin / rezeptliebe2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="pgAdmin" class="hidden">
+  <div id="wpadminbar">
+    <span class="site-name">Rezept<span>liebe</span> — Admin</span>
+    <div class="ab-right">
+      <a onclick="previewSite()">🌐 Website ansehen</a>
+      <a onclick="doLogout()">Abmelden</a>
+    </div>
+  </div>
+  <div class="wp-wrap">
+    <div id="adminmenu">
+      <div class="menu-item current" onclick="goTab('dashboard')"><span class="dashicon">📊</span>Dashboard</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" onclick="goTab('posts')"><span class="dashicon">📝</span>Artikel</div>
+      <div class="menu-item" onclick="newPost()"><span class="dashicon">➕</span>Neu erstellen</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" onclick="goTab('media')"><span class="dashicon">🖼️</span>Medien</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" onclick="goTab('settings')"><span class="dashicon">⚙️</span>Einstellungen</div>
+    </div>
+
+    <div id="wpcontent">
+      <div class="wrap">
+        <div id="notice" class="notice"><p id="noticeMsg"></p></div>
+
+        <!-- DASHBOARD -->
+        <div id="tab-dashboard" class="tab-content active">
+          <h1 class="wp-heading-inline">Dashboard</h1>
+          <button class="page-title-action" onclick="newPost()">+ Neu erstellen</button>
+          <div class="dashboard-widgets">
+            <div class="dash-widget"><div class="dash-widget-num" id="stTotal">—</div><div class="dash-widget-label">Artikel gesamt</div></div>
+            <div class="dash-widget"><div class="dash-widget-num" id="stFr">—</div><div class="dash-widget-label">Frühstück</div></div>
+            <div class="dash-widget"><div class="dash-widget-num" id="stHa">—</div><div class="dash-widget-label">Hauptgerichte</div></div>
+            <div class="dash-widget"><div class="dash-widget-num" id="stDe">—</div><div class="dash-widget-label">Desserts</div></div>
+          </div>
+          <h2 style="font-size:16px;font-weight:600;margin-bottom:.5rem">Neueste Artikel</h2>
+          <div id="dashTable"><p style="color:#646970">⏳ Laden...</p></div>
+        </div>
+
+        <!-- POSTS LIST -->
+        <div id="tab-posts" class="tab-content">
+          <h1 class="wp-heading-inline">Artikel</h1>
+          <button class="page-title-action" onclick="newPost()">+ Neu erstellen</button>
+          <div style="margin:1rem 0;display:flex;gap:1rem;align-items:center">
+            <div class="nav-tab-wrapper" style="border:none;margin:0">
+              <span class="nav-tab active" onclick="filterTable('all',this)">Alle</span>
+              <span class="nav-tab" onclick="filterTable('Frühstück',this)">Frühstück</span>
+              <span class="nav-tab" onclick="filterTable('Hauptgerichte',this)">Hauptgerichte</span>
+              <span class="nav-tab" onclick="filterTable('Desserts',this)">Desserts</span>
+            </div>
+          </div>
+          <div id="postsTable"><p style="color:#646970">⏳ Laden...</p></div>
+        </div>
+
+        <!-- POST EDITOR -->
+        <div id="tab-editor" class="tab-content">
+          <h1 class="wp-heading-inline" id="editorTitle">Neuer Artikel</h1>
+          <button class="page-title-action" onclick="showPreview()" style="background:#646970;margin-left:.5rem">👁 Vorschau</button>
+
+          <div style="margin-top:1.5rem">
+            <div class="editor-title" style="margin-bottom:1rem">
+              <input type="text" id="f-title" placeholder="Titel hier eingeben">
+            </div>
+
+            <!-- TOOLBAR -->
+            <div class="wp-editor-toolbar">
+              <span class="toolbar-label">Format:</span>
+              <button class="toolbar-btn" onclick="fmt('bold')" title="Fett"><b>B</b></button>
+              <button class="toolbar-btn" onclick="fmt('italic')" title="Kursiv"><i>I</i></button>
+              <button class="toolbar-btn" onclick="fmt('underline')" title="Unterstrichen"><u>U</u></button>
+              <div class="toolbar-sep"></div>
+              <button class="toolbar-btn" onclick="fmtBlock('h2')" title="Überschrift 2">H2</button>
+              <button class="toolbar-btn" onclick="fmtBlock('h3')" title="Überschrift 3">H3</button>
+              <button class="toolbar-btn" onclick="fmtBlock('p')" title="Absatz">¶</button>
+              <div class="toolbar-sep"></div>
+              <button class="toolbar-btn" onclick="fmt('insertUnorderedList')" title="Liste">• Liste</button>
+              <button class="toolbar-btn" onclick="fmt('insertOrderedList')" title="Nummerierte Liste">1. Liste</button>
+              <div class="toolbar-sep"></div>
+              <button class="toolbar-btn" onclick="fmtBlock('blockquote')" title="Zitat">❝</button>
+              <div class="toolbar-sep"></div>
+              <button class="toolbar-btn" onclick="insertImgInEditor()" title="Bild einfügen">🖼 Bild</button>
+              <input type="file" id="editorImgInput" accept="image/*" style="display:none" onchange="handleEditorImg(this)">
+              <div class="toolbar-sep"></div>
+              <button class="toolbar-btn" onclick="fmt('removeFormat')" title="Formatierung entfernen">✕ Format</button>
+            </div>
+            <div id="richEditor" contenteditable="true" spellcheck="true">
+              <p>Hier den Artikel schreiben...</p>
+            </div>
+          </div>
+
+          <div class="editor-wrap">
+            <div>
+              <!-- INGREDIENTS & STEPS -->
+              <div class="postbox" style="margin-top:1.5rem">
+                <div class="postbox-header"><h2>🥘 Zutaten</h2></div>
+                <div class="postbox-body">
+                  <div class="dl" id="ingList">
+                    <div class="dl-item"><input type="text" placeholder="z.B. 300 g Mehl"><button class="dl-rm" onclick="rmItem(this)">×</button></div>
+                    <div class="dl-item"><input type="text" placeholder="z.B. 2 Eier"><button class="dl-rm" onclick="rmItem(this)">×</button></div>
+                  </div>
+                  <button class="btn-add-row" onclick="addItem('ingList','Zutat...')">+ Zutat hinzufügen</button>
+                </div>
+              </div>
+              <div class="postbox">
+                <div class="postbox-header"><h2>👨‍🍳 Zubereitungsschritte</h2></div>
+                <div class="postbox-body">
+                  <div class="dl" id="stepList">
+                    <div class="dl-item"><input type="text" placeholder="Schritt 1..."><button class="dl-rm" onclick="rmItem(this)">×</button></div>
+                    <div class="dl-item"><input type="text" placeholder="Schritt 2..."><button class="dl-rm" onclick="rmItem(this)">×</button></div>
+                  </div>
+                  <button class="btn-add-row" onclick="addItem('stepList','Schritt...')">+ Schritt hinzufügen</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SIDEBAR METABOXES -->
+            <div>
+              <!-- PUBLISH -->
+              <div class="postbox">
+                <div class="postbox-header"><h2>📤 Veröffentlichen</h2></div>
+                <div class="postbox-body">
+                  <div style="font-size:12px;color:#646970;margin-bottom:12px">Status: <strong style="color:#00a32a">● Bereit</strong></div>
+                  <div class="publish-actions">
+                    <button class="btn-draft" onclick="goTab('posts')">Abbrechen</button>
+                    <button class="btn-publish" id="saveBtn" onclick="saveRecipe()">Veröffentlichen</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CATEGORY -->
+              <div class="postbox">
+                <div class="postbox-header"><h2>📁 Kategorie</h2></div>
+                <div class="postbox-body">
+                  <select id="f-cat" style="margin-bottom:0">
+                    <option value="Frühstück">🥞 Frühstück</option>
+                    <option value="Hauptgerichte">🍽️ Hauptgerichte</option>
+                    <option value="Desserts">🍰 Desserts</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- COVER IMAGE -->
+              <div class="postbox">
+                <div class="postbox-header"><h2>🖼️ Titelbild</h2></div>
+                <div class="postbox-body">
+                  <div class="cover-upload" id="coverBox">
+                    <input type="file" accept="image/*" onchange="handleCover(this)">
+                    <div class="cover-upload-icon">📷</div>
+                    <div class="cover-upload-text">Titelbild hochladen</div>
+                  </div>
+                  <img id="coverPreview" class="cover-preview">
+                  <button class="btn-remove-img" id="removeCoverBtn" onclick="removeCover()">✕ Bild entfernen</button>
+                </div>
+              </div>
+
+              <!-- RECIPE META -->
+              <div class="postbox">
+                <div class="postbox-header"><h2>📋 Rezept-Details</h2></div>
+                <div class="postbox-body">
+                  <label>Kurzbeschreibung</label>
+                  <textarea id="f-desc" placeholder="Kurze Beschreibung für die Übersicht..." style="min-height:70px"></textarea>
+                  <label>Zeit</label>
+                  <input type="text" id="f-time" placeholder="z.B. 30 Min">
+                  <label>Schwierigkeit</label>
+                  <select id="f-diff"><option>Sehr einfach</option><option selected>Einfach</option><option>Mittel</option><option>Schwer</option></select>
+                  <label>Portionen</label>
+                  <input type="number" id="f-portions" value="4" min="1" style="margin-bottom:0">
+                </div>
+              </div>
+
+              <!-- EMOJI -->
+              <div class="postbox">
+                <div class="postbox-header"><h2>😊 Emoji & Farbe</h2></div>
+                <div class="postbox-body">
+                  <label style="margin-bottom:6px;display:block">Emoji</label>
+                  <div class="emoji-grid" id="emojiPick"></div>
+                  <label style="margin-bottom:6px;display:block">Hintergrund</label>
+                  <div class="color-grid" id="colorPick">
+                    <div class="cp sel" data-fi="fi-default" style="background:linear-gradient(135deg,#E3F2FD,#90CAF9)"></div>
+                    <div class="cp" data-fi="fi-pancake" style="background:linear-gradient(135deg,#FFF8E1,#FFE082)"></div>
+                    <div class="cp" data-fi="fi-pasta" style="background:linear-gradient(135deg,#F3E5F5,#CE93D8)"></div>
+                    <div class="cp" data-fi="fi-cake" style="background:linear-gradient(135deg,#FFF9C4,#FFF176)"></div>
+                    <div class="cp" data-fi="fi-salad" style="background:linear-gradient(135deg,#E8F5E9,#A5D6A7)"></div>
+                    <div class="cp" data-fi="fi-oats" style="background:linear-gradient(135deg,#FCE4EC,#F48FB1)"></div>
+                    <div class="cp" data-fi="fi-warm" style="background:linear-gradient(135deg,#FBE9E7,#FFAB91)"></div>
+                    <div class="cp" data-fi="fi-green" style="background:linear-gradient(135deg,#F1F8E9,#C5E1A5)"></div>
+                    <div class="cp" data-fi="fi-purple" style="background:linear-gradient(135deg,#EDE7F6,#B39DDB)"></div>
+                    <div class="cp" data-fi="fi-yellow" style="background:linear-gradient(135deg,#FFFDE7,#FFF59D)"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="tab-settings" class="tab-content">
+          <h1 class="wp-heading-inline">Einstellungen</h1>
+          <div style="background:#fff;border:1px solid #c3c4c7;border-radius:4px;padding:2rem;margin-top:1rem;max-width:600px">
+            <table style="width:100%;border-collapse:collapse">
+              <tr style="border-bottom:1px solid #f0f0f1">
+                <th style="text-align:left;padding:12px 0;font-size:13px;width:180px;color:#1d2327">Blog-Titel</th>
+                <td style="padding:12px 0"><input type="text" id="blogTitle" value="Rezeptliebe" style="width:100%;padding:8px 10px;border:1px solid #8c8f94;border-radius:4px;font-size:13px;outline:none"></td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0f0f1">
+                <th style="text-align:left;padding:12px 0;font-size:13px;color:#1d2327">Untertitel</th>
+                <td style="padding:12px 0"><input type="text" id="blogSub" value="Einfach. Lecker. Für jeden Tag." style="width:100%;padding:8px 10px;border:1px solid #8c8f94;border-radius:4px;font-size:13px;outline:none"></td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0f0f1">
+                <th style="text-align:left;padding:12px 0;font-size:13px;color:#1d2327">Neues Passwort</th>
+                <td style="padding:12px 0"><input type="password" id="newPass" placeholder="Leer lassen um nicht zu ändern" style="width:100%;padding:8px 10px;border:1px solid #8c8f94;border-radius:4px;font-size:13px;outline:none"></td>
+              </tr>
+            </table>
+            <div style="margin-top:1.5rem">
+              <button class="btn-publish" onclick="saveSettings()">Einstellungen speichern</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW OVERLAY -->
+<div class="preview-overlay" id="previewOverlay">
+  <div class="preview-wrap">
+    <div class="preview-bar">
+      <span>👁 Vorschau</span>
+      <button onclick="closePreview()">✕ Schließen</button>
+    </div>
+    <div class="preview-content" id="previewContent"></div>
+  </div>
+</div>
+
+<script>
+const SB_URL='https://csoupvuriwhulgbpvzhv.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzb3VwdnVyaXdodWxnYnB2emh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNDQ4MDQsImV4cCI6MjA5MjcyMDgwNH0.oN39s5GF-PyGzsbqI68Oynsk3qdviOYpsJI6XfNeXIM';
+const H={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+let PASS='rezeptliebe2026',editId=null,selEmoji='🍳',selFi='fi-default',coverBase64=null,allPosts=[];
+
+// EMOJI
+const EMOJIS=[...'🥞🍳🥗🍝🍲🫕🍜🥘🍛🥙🌮🍕🥩🍰🎂🧁🍮🍩🫐🍋🍓🥐🧇'];
+document.getElementById('emojiPick').innerHTML=EMOJIS.map((e,i)=>
+  `<span class="ep${i===1?' sel':''}" onclick="pickEmoji(this,'${e}')">${e}</span>`).join('');
+document.querySelectorAll('.cp').forEach(el=>el.addEventListener('click',function(){
+  document.querySelectorAll('.cp').forEach(x=>x.classList.remove('sel'));
+  this.classList.add('sel');selFi=this.dataset.fi;
+}));
+function pickEmoji(el,e){document.querySelectorAll('.ep').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');selEmoji=e;}
+
+// AUTH
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(u==='admin'&&p===PASS){
+    document.getElementById('pgLogin').classList.add('hidden');
+    document.getElementById('pgAdmin').classList.remove('hidden');
+    loadAll();
+  } else document.getElementById('loginErr').style.display='block';
+}
+function doLogout(){
+  document.getElementById('pgAdmin').classList.add('hidden');
+  document.getElementById('pgLogin').classList.remove('hidden');
+  document.getElementById('loginPass').value='';
+}
+function previewSite(){window.open('index.html','_blank');}
+
+// TABS
+function goTab(t){
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('.menu-item').forEach((el,i)=>{
+    el.classList.toggle('current',['dashboard','posts','editor','media','settings'][i]===t);
+  });
+  if(t==='dashboard'||t==='posts') loadAll();
+}
+
+// SUPABASE
+async function sbGet(){
+  try{const r=await fetch(`${SB_URL}/rest/v1/recipes?order=created_at.desc`,{headers:H});return r.ok?await r.json():[];}catch{return[];}
+}
+async function sbInsert(d){
+  try{const r=await fetch(`${SB_URL}/rest/v1/recipes`,{method:'POST',headers:{...H,'Prefer':'return=representation'},body:JSON.stringify(d)});return r.ok;}catch{return false;}
+}
+async function sbUpdate(id,d){
+  try{const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${id}`,{method:'PATCH',headers:{...H,'Prefer':'return=representation'},body:JSON.stringify(d)});return r.ok;}catch{return false;}
+}
+async function sbDelete(id){
+  try{const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${id}`,{method:'DELETE',headers:H});return r.ok;}catch{return false;}
+}
+
+async function loadAll(){
+  allPosts=await sbGet();
+  updateStats();
+  renderTable(allPosts,'dashTable');
+  renderTable(allPosts,'postsTable');
+}
+
+function updateStats(){
+  document.getElementById('stTotal').textContent=allPosts.length;
+  document.getElementById('stFr').textContent=allPosts.filter(r=>r.tag==='Frühstück').length;
+  document.getElementById('stHa').textContent=allPosts.filter(r=>r.tag==='Hauptgerichte').length;
+  document.getElementById('stDe').textContent=allPosts.filter(r=>r.tag==='Desserts').length;
+}
+
+function badge(t){const m={Frühstück:'cat-fr',Hauptgerichte:'cat-ha',Desserts:'cat-de'};return `<span class="cat-badge ${m[t]||'cat-fr'}">${t}</span>`;}
+
+function renderTable(data,id){
+  const el=document.getElementById(id);
+  if(!data.length){el.innerHTML='<p style="color:#646970;padding:1rem">Keine Artikel vorhanden.</p>';return;}
+  el.innerHTML=`<table class="wp-list-table">
+    <thead><tr><th>Titel</th><th>Kategorie</th><th>Zeit</th><th>Datum</th></tr></thead>
+    <tbody>${data.map(r=>`<tr>
+      <td>
+        <strong>${r.emoji||'🍽️'} ${r.title}</strong>
+        <div class="row-actions">
+          <span><a onclick="editPost('${r.id}')">Bearbeiten</a></span>
+          <span class="trash"><a onclick="delPost('${r.id}')">Löschen</a></span>
+        </div>
+      </td>
+      <td>${badge(r.tag)}</td>
+      <td style="color:#646970">${r.time||'—'}</td>
+      <td style="color:#646970;font-size:12px">${r.created_at?new Date(r.created_at).toLocaleDateString('de-DE'):'—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function filterTable(cat,el){
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  const filtered=cat==='all'?allPosts:allPosts.filter(r=>r.tag===cat);
+  renderTable(filtered,'postsTable');
+}
+
+// EDITOR
+function newPost(){
+  editId=null;coverBase64=null;
+  document.getElementById('editorTitle').textContent='Neuer Artikel';
+  document.getElementById('saveBtn').textContent='Veröffentlichen';
+  document.getElementById('f-title').value='';
+  document.getElementById('f-desc').value='';
+  document.getElementById('f-time').value='';
+  document.getElementById('f-portions').value='4';
+  document.getElementById('f-cat').value='Frühstück';
+  document.getElementById('f-diff').value='Einfach';
+  document.getElementById('richEditor').innerHTML='<p>Hier den Artikel schreiben...</p>';
+  document.getElementById('coverPreview').style.display='none';
+  document.getElementById('removeCoverBtn').style.display='none';
+  document.getElementById('ingList').innerHTML='<div class="dl-item"><input type="text" placeholder="Zutat..."><button class="dl-rm" onclick="rmItem(this)">×</button></div>';
+  document.getElementById('stepList').innerHTML='<div class="dl-item"><input type="text" placeholder="Schritt 1..."><button class="dl-rm" onclick="rmItem(this)">×</button></div>';
+  goTab('editor');
+}
+
+function editPost(id){
+  const r=allPosts.find(x=>x.id==id);if(!r)return;
+  editId=id;
+  document.getElementById('editorTitle').textContent='Artikel bearbeiten';
+  document.getElementById('saveBtn').textContent='Aktualisieren';
+  document.getElementById('f-title').value=r.title||'';
+  document.getElementById('f-desc').value=r.description||'';
+  document.getElementById('f-time').value=r.time||'';
+  document.getElementById('f-portions').value=r.portions||4;
+  document.getElementById('f-cat').value=r.tag||'Frühstück';
+  document.getElementById('f-diff').value=r.diff||'Einfach';
+  document.getElementById('richEditor').innerHTML=r.content||'<p>Hier den Artikel schreiben...</p>';
+  selEmoji=r.emoji||'🍳';selFi=r.fi||'fi-default';
+  if(r.cover_image){
+    coverBase64=r.cover_image;
+    const img=document.getElementById('coverPreview');
+    img.src=r.cover_image;img.style.display='block';
+    document.getElementById('removeCoverBtn').style.display='block';
+  } else {coverBase64=null;document.getElementById('coverPreview').style.display='none';document.getElementById('removeCoverBtn').style.display='none';}
+  const ings=Array.isArray(r.ingredients)?r.ingredients:[];
+  const steps=Array.isArray(r.steps)?r.steps:[];
+  document.getElementById('ingList').innerHTML=ings.map(i=>`<div class="dl-item"><input type="text" value="${i}"><button class="dl-rm" onclick="rmItem(this)">×</button></div>`).join('')||'<div class="dl-item"><input type="text" placeholder="Zutat..."><button class="dl-rm" onclick="rmItem(this)">×</button></div>';
+  document.getElementById('stepList').innerHTML=steps.map(s=>`<div class="dl-item"><input type="text" value="${s}"><button class="dl-rm" onclick="rmItem(this)">×</button></div>`).join('')||'<div class="dl-item"><input type="text" placeholder="Schritt..."><button class="dl-rm" onclick="rmItem(this)">×</button></div>';
+  goTab('editor');
+}
+
+async function delPost(id){
+  if(!confirm('Diesen Artikel wirklich löschen?'))return;
+  const ok=await sbDelete(id);
+  if(ok){showNotice('success','Artikel wurde gelöscht.');loadAll();}
+  else showNotice('error','Fehler beim Löschen!');
+}
+
+async function saveRecipe(){
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){alert('Bitte Titel eingeben!');return;}
+  const ings=[...document.querySelectorAll('#ingList input')].map(i=>i.value.trim()).filter(Boolean);
+  const steps=[...document.querySelectorAll('#stepList input')].map(i=>i.value.trim()).filter(Boolean);
+  const obj={
+    title,
+    tag:document.getElementById('f-cat').value,
+    description:document.getElementById('f-desc').value||'',
+    content:document.getElementById('richEditor').innerHTML,
+    time:document.getElementById('f-time').value||'',
+    diff:document.getElementById('f-diff').value,
+    portions:document.getElementById('f-portions').value,
+    emoji:selEmoji,fi:selFi,
+    ingredients:ings,steps,
+    cover_image:coverBase64||null
+  };
+  document.getElementById('saveBtn').textContent='⏳ Speichern...';
+  const ok=editId?await sbUpdate(editId,obj):await sbInsert(obj);
+  if(ok){
+    showNotice('success',editId?'Artikel wurde aktualisiert!':'Artikel wurde veröffentlicht!');
+    editId=null;goTab('posts');
+  } else {
+    showNotice('error','Fehler beim Speichern!');
+    document.getElementById('saveBtn').textContent=editId?'Aktualisieren':'Veröffentlichen';
+  }
+}
+
+// TOOLBAR
+function fmt(cmd){document.execCommand(cmd,false,null);document.getElementById('richEditor').focus();}
+function fmtBlock(tag){document.execCommand('formatBlock',false,tag);document.getElementById('richEditor').focus();}
+function insertImgInEditor(){document.getElementById('editorImgInput').click();}
+function handleEditorImg(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById('richEditor').focus();
+    document.execCommand('insertImage',false,e.target.result);
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+// COVER
+function handleCover(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    coverBase64=e.target.result;
+    const img=document.getElementById('coverPreview');
+    img.src=e.target.result;img.style.display='block';
+    document.getElementById('removeCoverBtn').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function removeCover(){
+  coverBase64=null;
+  document.getElementById('coverPreview').style.display='none';
+  document.getElementById('removeCoverBtn').style.display='none';
+}
+
+// FORM HELPERS
+function addItem(listId,ph){
+  const d=document.createElement('div');d.className='dl-item';
+  d.innerHTML=`<input type="text" placeholder="${ph}"><button class="dl-rm" onclick="rmItem(this)">×</button>`;
+  document.getElementById(listId).appendChild(d);
+}
+function rmItem(btn){const l=btn.parentElement.parentElement;if(l.children.length>1)btn.parentElement.remove();}
+
+// PREVIEW
+function showPreview(){
+  const title=document.getElementById('f-title').value||'Kein Titel';
+  const content=document.getElementById('richEditor').innerHTML;
+  const cat=document.getElementById('f-cat').value;
+  const time=document.getElementById('f-time').value;
+  const diff=document.getElementById('f-diff').value;
+  const cover=coverBase64?`<img class="cover" src="${coverBase64}" alt="Cover">`:'';
+  document.getElementById('previewContent').innerHTML=`
+    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#E8614A;font-family:sans-serif;margin-bottom:.8rem">${cat}</div>
+    <h1>${title}</h1>
+    <div class="meta">${time?time+' · ':''}${diff}</div>
+    ${cover}
+    <div class="body">${content}</div>`;
+  document.getElementById('previewOverlay').style.display='block';
+}
+function closePreview(){document.getElementById('previewOverlay').style.display='none';}
+
+// SETTINGS
+function saveSettings(){
+  const pass=document.getElementById('newPass').value;
+  if(pass) PASS=pass;
+  localStorage.setItem('blogTitle',document.getElementById('blogTitle').value);
+  localStorage.setItem('blogSub',document.getElementById('blogSub').value);
+  showNotice('success','Einstellungen gespeichert!');
+  document.getElementById('newPass').value='';
+}
+
+function showNotice(type,msg){
+  const n=document.getElementById('notice');
+  document.getElementById('noticeMsg').textContent=msg;
+  n.className='notice '+type;n.style.display='block';
+  setTimeout(()=>n.style.display='none',4000);
+}
+</script>
+</body>
+</html>

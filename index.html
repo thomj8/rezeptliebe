@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezeptliebe — Einfache Rezepte für jeden Tag</title>
+<meta name="description" content="Einfache und leckere Rezepte für jeden Tag — von Frühstück bis Dessert.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#333;background:#fff;font-size:16px;line-height:1.7}
+img{max-width:100%}
+a{color:#E8614A;text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* TOP BAR */
+.top-bar{background:#1a1a1a;padding:6px 0;text-align:center;font-size:12px;color:#aaa;font-family:sans-serif;letter-spacing:.5px}
+
+/* NAV */
+.site-header{background:#fff;border-bottom:1px solid #e8e8e8;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+.site-title{font-family:Georgia,serif;font-size:22px;color:#1a1a1a;font-weight:normal}
+.site-title span{color:#E8614A}
+.main-nav{display:flex;gap:0;align-items:center}
+.main-nav a{font-size:14px;color:#555;padding:0 16px;height:64px;display:flex;align-items:center;border-bottom:3px solid transparent;transition:.2s;font-family:sans-serif}
+.main-nav a:hover{color:#E8614A;text-decoration:none;border-bottom-color:#E8614A}
+.main-nav a.active{color:#E8614A;border-bottom-color:#E8614A}
+.nav-search{display:flex;align-items:center;gap:8px}
+.nav-search input{padding:7px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;outline:none;width:160px;transition:.2s}
+.nav-search input:focus{border-color:#E8614A;width:200px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#fff9f8 0%,#fff3f0 100%);border-bottom:1px solid #f0e0dc}
+.hero-inner{max-width:1100px;margin:0 auto;padding:4rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero-tag{font-size:11px;letter-spacing:3px;color:#E8614A;text-transform:uppercase;margin-bottom:1rem;font-family:sans-serif;font-weight:600}
+.hero h1{font-family:Georgia,serif;font-size:38px;line-height:1.2;margin-bottom:1.2rem;font-weight:normal;color:#1a1a1a}
+.hero-desc{font-size:16px;color:#666;line-height:1.8;margin-bottom:2rem}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:#E8614A;color:#fff;padding:12px 28px;border-radius:4px;font-size:14px;font-family:sans-serif;border:none;cursor:pointer;display:inline-block;transition:.2s}
+.btn-primary:hover{background:#d4503a;text-decoration:none;color:#fff}
+.btn-secondary{background:#fff;color:#E8614A;padding:11px 24px;border-radius:4px;font-size:14px;font-family:sans-serif;border:2px solid #E8614A;cursor:pointer;display:inline-block;transition:.2s}
+.btn-secondary:hover{background:#E8614A;color:#fff;text-decoration:none}
+.hero-visual{position:relative}
+.hero-img-wrap{border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.12);aspect-ratio:4/3}
+.hero-img-wrap img{width:100%;height:100%;object-fit:cover}
+.hero-fallback{width:100%;height:100%;background:linear-gradient(135deg,#FFF3E0,#FFE0B2);display:flex;align-items:center;justify-content:center;font-size:80px;min-height:280px}
+
+/* CATEGORIES BAR */
+.cat-bar{background:#fff;border-bottom:1px solid #eee}
+.cat-bar-inner{max-width:1100px;margin:0 auto;padding:0 2rem;display:flex;gap:0}
+.cat-link{display:flex;align-items:center;gap:8px;padding:1rem 1.5rem;font-size:13px;font-family:sans-serif;color:#555;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
+.cat-link:hover{color:#E8614A;border-bottom-color:#E8614A}
+.cat-link .ci{font-size:18px}
+.cat-count{font-size:11px;color:#aaa;margin-left:4px}
+
+/* MAIN LAYOUT */
+.site-content{max-width:1100px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:1fr 300px;gap:3rem;align-items:start}
+
+/* POSTS */
+.posts-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid #E8614A}
+.posts-header h2{font-size:18px;font-weight:600;font-family:sans-serif;color:#1a1a1a}
+.posts-header a{font-size:13px;color:#E8614A}
+
+/* POST CARD */
+.post-card{display:grid;grid-template-columns:260px 1fr;gap:1.5rem;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid #f0f0f0;align-items:start}
+.post-card:last-child{border-bottom:none}
+.post-thumb{border-radius:6px;overflow:hidden;aspect-ratio:16/10;background:#f5f5f5;flex-shrink:0;cursor:pointer}
+.post-thumb img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.post-thumb:hover img{transform:scale(1.04)}
+.post-thumb .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer}
+.post-body{display:flex;flex-direction:column;justify-content:center}
+.post-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#E8614A;font-family:sans-serif;font-weight:600;margin-bottom:6px;cursor:pointer}
+.post-title{font-family:Georgia,serif;font-size:20px;color:#1a1a1a;margin-bottom:8px;line-height:1.3;cursor:pointer}
+.post-title:hover{color:#E8614A}
+.post-excerpt{font-size:14px;color:#666;line-height:1.7;margin-bottom:10px}
+.post-meta{display:flex;gap:1rem;font-size:12px;color:#aaa;font-family:sans-serif;flex-wrap:wrap}
+.post-meta span{display:flex;align-items:center;gap:4px}
+.read-more{display:inline-block;font-size:13px;color:#E8614A;font-family:sans-serif;font-weight:500;margin-top:8px}
+.read-more:hover{text-decoration:underline}
+
+/* FEATURED POST (big) */
+.featured-post{margin-bottom:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid #f0f0f0}
+.featured-thumb{border-radius:8px;overflow:hidden;aspect-ratio:16/7;background:#f5f5f5;cursor:pointer;margin-bottom:1.2rem}
+.featured-thumb img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.featured-thumb:hover img{transform:scale(1.02)}
+.featured-thumb .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:70px}
+.featured-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;background:#E8614A;color:#fff;padding:3px 10px;border-radius:3px;font-family:sans-serif;font-weight:600;display:inline-block;margin-bottom:10px}
+.featured-post .post-title{font-size:26px;margin-bottom:10px}
+.featured-post .post-excerpt{font-size:15px}
+
+/* SIDEBAR */
+.sidebar{}
+.widget{background:#fff;border:1px solid #eee;border-radius:6px;padding:1.5rem;margin-bottom:1.5rem}
+.widget-title{font-size:14px;font-weight:700;font-family:sans-serif;color:#1a1a1a;margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:2px solid #E8614A;text-transform:uppercase;letter-spacing:.5px}
+/* RECENT POSTS WIDGET */
+.recent-post{display:flex;gap:10px;margin-bottom:1rem;cursor:pointer;padding-bottom:1rem;border-bottom:1px solid #f5f5f5}
+.recent-post:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.recent-thumb{width:60px;height:60px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f5f5f5}
+.recent-thumb img{width:100%;height:100%;object-fit:cover}
+.recent-thumb .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.recent-info{}
+.recent-title{font-size:13px;color:#1a1a1a;line-height:1.4;font-weight:500}
+.recent-title:hover{color:#E8614A}
+.recent-meta{font-size:11px;color:#aaa;margin-top:3px;font-family:sans-serif}
+/* CATEGORIES WIDGET */
+.cat-widget-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;cursor:pointer;font-size:14px}
+.cat-widget-item:last-child{border-bottom:none}
+.cat-widget-item:hover{color:#E8614A}
+.cat-widget-count{background:#f5f5f5;color:#888;font-size:11px;padding:2px 8px;border-radius:20px;font-family:sans-serif}
+/* NEWSLETTER WIDGET */
+.nl-widget input{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:4px;font-size:13px;outline:none;margin-bottom:8px}
+.nl-widget input:focus{border-color:#E8614A}
+.nl-widget p{font-size:13px;color:#888;margin-bottom:12px;line-height:1.6}
+
+/* AD WIDGET */
+.ad-widget{background:#f9f9f9;border:1px dashed #ddd;border-radius:6px;padding:1.5rem;text-align:center;margin-bottom:1.5rem}
+.ad-widget p{font-size:10px;color:#bbb;letter-spacing:2px;font-family:sans-serif}
+
+/* SINGLE POST */
+#pgSingle{display:none}
+.single-wrap{max-width:1100px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:1fr 300px;gap:3rem;align-items:start}
+.single-main{}
+.breadcrumb{font-size:13px;color:#aaa;font-family:sans-serif;margin-bottom:1.5rem}
+.breadcrumb a{color:#E8614A;cursor:pointer}
+.breadcrumb a:hover{text-decoration:underline}
+.single-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#E8614A;font-family:sans-serif;font-weight:600;margin-bottom:8px}
+.single-title{font-family:Georgia,serif;font-size:36px;font-weight:normal;line-height:1.25;margin-bottom:1rem;color:#1a1a1a}
+.single-meta{display:flex;gap:1.5rem;font-size:13px;color:#aaa;font-family:sans-serif;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid #eee;flex-wrap:wrap}
+.single-meta span{display:flex;align-items:center;gap:5px}
+.single-cover{width:100%;border-radius:8px;overflow:hidden;aspect-ratio:16/7;background:#f5f5f5;margin-bottom:2.5rem}
+.single-cover img{width:100%;height:100%;object-fit:cover}
+.single-cover .fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:90px}
+/* RECIPE BOX */
+.recipe-box{background:#fffaf9;border:1px solid #f0e0dc;border-radius:8px;padding:2rem;margin-bottom:2.5rem}
+.recipe-box-title{font-size:16px;font-weight:700;font-family:sans-serif;color:#1a1a1a;margin-bottom:1.5rem;padding-bottom:.8rem;border-bottom:1px solid #f0e0dc}
+.recipe-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.recipe-stat{text-align:center;background:#fff;border:1px solid #f0e0dc;border-radius:6px;padding:1rem}
+.recipe-stat-num{font-size:18px;font-weight:700;color:#E8614A;font-family:sans-serif}
+.recipe-stat-label{font-size:11px;color:#aaa;font-family:sans-serif;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.recipe-cols{display:grid;grid-template-columns:1fr 1.5fr;gap:2rem}
+.recipe-cols h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;font-family:sans-serif;color:#1a1a1a;margin-bottom:1rem}
+.ing-list{list-style:none}
+.ing-list li{padding:7px 0;border-bottom:1px solid #f5f5f5;font-size:14px;color:#444;display:flex;align-items:center;gap:8px}
+.ing-list li::before{content:'';width:6px;height:6px;background:#E8614A;border-radius:50%;flex-shrink:0}
+.step-list{list-style:none;counter-reset:s}
+.step-list li{counter-increment:s;padding:0 0 1.2rem 3rem;position:relative;font-size:14px;color:#444;line-height:1.8}
+.step-list li::before{content:counter(s);position:absolute;left:0;top:2px;width:24px;height:24px;background:#E8614A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700}
+/* ARTICLE CONTENT */
+.entry-content{font-size:16px;line-height:1.9;color:#333;margin-bottom:2.5rem}
+.entry-content h2{font-family:Georgia,serif;font-size:24px;font-weight:normal;margin:2rem 0 1rem;color:#1a1a1a;border-left:4px solid #E8614A;padding-left:1rem}
+.entry-content h3{font-family:Georgia,serif;font-size:20px;font-weight:normal;margin:1.5rem 0 .8rem;color:#1a1a1a}
+.entry-content p{margin-bottom:1.2rem}
+.entry-content img{width:100%;border-radius:6px;margin:1.5rem 0;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.entry-content ul,.entry-content ol{margin:0 0 1.2rem 1.5rem}
+.entry-content li{margin-bottom:.5rem}
+.entry-content blockquote{border-left:4px solid #E8614A;padding:1rem 1.5rem;margin:1.5rem 0;background:#fff9f8;border-radius:0 6px 6px 0;font-style:italic;color:#555}
+
+/* FOOTER */
+.site-footer{background:#1a1a1a;color:#aaa;margin-top:4rem}
+.footer-top{max-width:1100px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem}
+.footer-brand .brand-name{font-family:Georgia,serif;font-size:20px;color:#fff;margin-bottom:.8rem}
+.footer-brand .brand-name span{color:#E8614A}
+.footer-brand p{font-size:13px;line-height:1.7}
+.footer-col h4{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#fff;font-family:sans-serif;margin-bottom:1rem;font-weight:600}
+.footer-col a{display:block;font-size:13px;color:#aaa;margin-bottom:7px;cursor:pointer}
+.footer-col a:hover{color:#E8614A;text-decoration:none}
+.footer-bottom{border-top:1px solid #2a2a2a;padding:1.2rem 2rem;max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;font-size:12px;font-family:sans-serif}
+
+/* FOOD BG */
+.fi-pancake{background:linear-gradient(135deg,#FFF8E1,#FFE082)}
+.fi-pasta{background:linear-gradient(135deg,#F3E5F5,#CE93D8)}
+.fi-cake{background:linear-gradient(135deg,#FFF9C4,#FFF176)}
+.fi-salad{background:linear-gradient(135deg,#E8F5E9,#A5D6A7)}
+.fi-oats{background:linear-gradient(135deg,#FCE4EC,#F48FB1)}
+.fi-default{background:linear-gradient(135deg,#E3F2FD,#90CAF9)}
+.fi-warm{background:linear-gradient(135deg,#FBE9E7,#FFAB91)}
+.fi-green{background:linear-gradient(135deg,#F1F8E9,#C5E1A5)}
+.fi-purple{background:linear-gradient(135deg,#EDE7F6,#B39DDB)}
+.fi-yellow{background:linear-gradient(135deg,#FFFDE7,#FFF59D)}
+
+/* LOADING */
+.loading{text-align:center;padding:4rem;color:#aaa;font-family:sans-serif}
+.empty{text-align:center;padding:4rem;color:#aaa;font-family:sans-serif}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .hero-inner,.site-content,.single-wrap,.footer-top{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .post-card{grid-template-columns:1fr}
+  .recipe-cols{grid-template-columns:1fr}
+  .recipe-stats{grid-template-columns:repeat(3,1fr)}
+  .sidebar{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">🍳 Neue Rezepte jeden Montag — Jetzt Newsletter abonnieren!</div>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a class="site-title" onclick="goHome()" style="cursor:pointer">Rezept<span>liebe</span></a>
+    <nav class="main-nav">
+      <a onclick="goHome()" id="navAll" class="active">Alle Rezepte</a>
+      <a onclick="filterCat('Frühstück')" id="navFr">Frühstück</a>
+      <a onclick="filterCat('Hauptgerichte')" id="navHa">Hauptgerichte</a>
+      <a onclick="filterCat('Desserts')" id="navDe">Desserts</a>
+    </nav>
+    <div class="nav-search">
+      <input type="text" placeholder="Rezept suchen..." oninput="handleSearch(this.value)" id="searchInput">
+    </div>
+  </div>
+</header>
+
+<!-- HOME PAGE -->
+<div id="pgHome">
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="hero-tag">Einfach. Lecker. Für jeden Tag.</p>
+        <h1>Kochen mit Liebe — Rezepte die wirklich gelingen</h1>
+        <p class="hero-desc">Von schnellen Alltagsgerichten bis zu besonderen Wochenendspeisen — hier findest du Rezepte die immer funktionieren und begeistern.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="document.getElementById('mainContent').scrollIntoView({behavior:'smooth'})">Rezepte entdecken</button>
+          <button class="btn-secondary" onclick="filterCat('Frühstück')">Frühstück →</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-img-wrap" id="heroImgWrap">
+          <div class="hero-fallback">🍳</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cat-bar">
+    <div class="cat-bar-inner">
+      <div class="cat-link" onclick="filterCat('Frühstück')"><span class="ci">🥞</span> Frühstück <span class="cat-count" id="cntFr"></span></div>
+      <div class="cat-link" onclick="filterCat('Hauptgerichte')"><span class="ci">🍽️</span> Hauptgerichte <span class="cat-count" id="cntHa"></span></div>
+      <div class="cat-link" onclick="filterCat('Desserts')"><span class="ci">🍰</span> Desserts <span class="cat-count" id="cntDe"></span></div>
+    </div>
+  </div>
+
+  <div class="site-content" id="mainContent">
+    <!-- MAIN -->
+    <main>
+      <div class="posts-header">
+        <h2 id="postsTitle">Neueste Rezepte</h2>
+        <a id="showAllLink" style="display:none" onclick="goHome()">Alle anzeigen →</a>
+      </div>
+      <div id="postsList"><div class="loading">⏳ Rezepte werden geladen...</div></div>
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="ad-widget">
+        <p>WERBUNG · GOOGLE ADSENSE</p>
+        <div style="height:90px;background:#f0f0f0;border-radius:4px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#ccc">300×90</div>
+      </div>
+      <div class="widget">
+        <h3 class="widget-title">Kategorien</h3>
+        <div id="catWidget"></div>
+      </div>
+      <div class="widget">
+        <h3 class="widget-title">Beliebte Rezepte</h3>
+        <div id="recentWidget"></div>
+      </div>
+      <div class="widget nl-widget">
+        <h3 class="widget-title">Newsletter</h3>
+        <p>Neue Rezepte direkt in dein Postfach — jeden Montag.</p>
+        <input type="email" placeholder="Deine E-Mail-Adresse">
+        <button class="btn-primary" style="width:100%;padding:9px">Abonnieren</button>
+      </div>
+      <div class="ad-widget">
+        <p>WERBUNG · GOOGLE ADSENSE</p>
+        <div style="height:250px;background:#f0f0f0;border-radius:4px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#ccc">300×250</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- SINGLE POST PAGE -->
+<div id="pgSingle">
+  <div class="single-wrap">
+    <article class="single-main" id="singleContent"></article>
+    <aside class="sidebar">
+      <div class="ad-widget">
+        <p>WERBUNG · GOOGLE ADSENSE</p>
+        <div style="height:90px;background:#f0f0f0;border-radius:4px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#ccc">300×90</div>
+      </div>
+      <div class="widget">
+        <h3 class="widget-title">Weitere Rezepte</h3>
+        <div id="singleRecent"></div>
+      </div>
+      <div class="widget nl-widget">
+        <h3 class="widget-title">Newsletter</h3>
+        <p>Neue Rezepte direkt in dein Postfach.</p>
+        <input type="email" placeholder="E-Mail-Adresse">
+        <button class="btn-primary" style="width:100%;padding:9px">Abonnieren</button>
+      </div>
+      <div class="ad-widget">
+        <p>WERBUNG · GOOGLE ADSENSE</p>
+        <div style="height:250px;background:#f0f0f0;border-radius:4px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#ccc">300×250</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="brand-name">Rezept<span>liebe</span></div>
+      <p>Einfache und leckere Rezepte für jeden Tag — von Frühstück bis Dessert. Kochen macht Spaß wenn die Rezepte wirklich funktionieren.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Kategorien</h4>
+      <a onclick="filterCat('Frühstück')">Frühstück</a>
+      <a onclick="filterCat('Hauptgerichte')">Hauptgerichte</a>
+      <a onclick="filterCat('Desserts')">Desserts</a>
+    </div>
+    <div class="footer-col">
+      <h4>Info</h4>
+      <a>Über uns</a><a>Kontakt</a><a>Newsletter</a>
+    </div>
+    <div class="footer-col">
+      <h4>Rechtliches</h4>
+      <a>Impressum</a><a>Datenschutz</a><a>Cookie-Richtlinie</a>
+    </div>
+  </div>
+  <div style="border-top:1px solid #2a2a2a">
+    <div class="footer-bottom">
+      <span>© 2026 Rezeptliebe — Alle Rechte vorbehalten</span>
+      <span>Mit ❤️ gekocht</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const SB_URL='https://csoupvuriwhulgbpvzhv.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzb3VwdnVyaXdodWxnYnB2emh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNDQ4MDQsImV4cCI6MjA5MjcyMDgwNH0.oN39s5GF-PyGzsbqI68Oynsk3qdviOYpsJI6XfNeXIM';
+const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+const SAMPLE=[
+  {id:'s1',tag:"Frühstück",title:"Fluffige Buttermilch-Pancakes",description:"Diese amerikanischen Pancakes sind außen goldbraun und innen unglaublich fluffig. Das Geheimnis liegt in der Buttermilch.",time:"20 Min",diff:"Einfach",portions:"4",fi:"fi-pancake",emoji:"🥞",
+  content:"<h2>Das perfekte Frühstück</h2><p>Pancakes sind in Amerika das klassische Sonntagsfrühstück — und das aus gutem Grund. Diese Variante mit Buttermilch ist besonders fluffig und zart.</p><h3>Warum Buttermilch?</h3><p>Buttermilch reagiert mit dem Backpulver und erzeugt kleine Luftbläschen im Teig. Das macht die Pancakes unglaublich locker und leicht.</p><h2>Tipps für perfekte Pancakes</h2><p>Der wichtigste Tipp: Rühre den Teig nicht zu viel! Klümpchen im Teig sind normal und gewünscht — sie verschwinden beim Backen.</p><blockquote>Ein guter Pancake-Teig sollte nicht glatt sein — Klümpchen sind das Geheimnis der Fluffigkeit!</blockquote>",
+  ingredients:["300 g Mehl","2 TL Backpulver","1 TL Natron","2 EL Zucker","400 ml Buttermilch","2 Eier","3 EL Butter","Ahornsirup & Beeren"],
+  steps:["Mehl, Backpulver, Natron und Zucker vermischen.","Buttermilch, Eier und Butter verrühren.","Kurz zusammenrühren — Teig darf klumpig sein!","Portionsweise in der Pfanne backen bis Bläschen entstehen.","Mit Ahornsirup und Beeren servieren."]},
+  {id:'s2',tag:"Hauptgerichte",title:"Cremige Pasta mit Spinat & Feta",description:"Ein schnelles Alltagsgericht das in nur 25 Minuten auf dem Tisch steht. Die Kombination aus cremigem Feta und frischem Spinat macht diese Pasta unwiderstehlich.",time:"25 Min",diff:"Einfach",portions:"2",fi:"fi-pasta",emoji:"🍝",
+  content:"<h2>Schnell, einfach, lecker</h2><p>Diese Pasta ist mein absolutes Lieblingsrezept für hektische Wochentage. In nur 25 Minuten steht ein vollwertiges Abendessen auf dem Tisch.</p><h3>Der Geheimtipp: Nudelwasser</h3><p>Hebe immer eine Tasse Nudelwasser auf bevor du die Pasta abgießt. Die Stärke im Wasser macht die Sauce cremiger und hilft ihr an der Pasta zu haften.</p><blockquote>Feta aus Schafsmilch hat den besten Geschmack — es lohnt sich, auf die Qualität zu achten.</blockquote>",
+  ingredients:["250 g Pasta","200 g Babyspinat","150 g Feta","2 Knoblauchzehen","200 ml Sahne","Olivenöl, Salz, Pfeffer"],
+  steps:["Pasta in Salzwasser al dente kochen.","Knoblauch in Olivenöl anschwitzen.","Spinat hinzufügen und zusammenfallen lassen.","Sahne und Feta einrühren bis cremig.","Mit Pasta vermischen und servieren."]},
+  {id:'s3',tag:"Desserts",title:"Zitronenkuchen mit Glasur",description:"Ein klassischer saftiger Zitronenkuchen mit einer süßen Zuckerglas-Glasur. Frisch, aromatisch und unglaublich lecker.",time:"55 Min",diff:"Mittel",portions:"8",fi:"fi-cake",emoji:"🍋",
+  content:"<h2>Der klassische Zitronenkuchen</h2><p>Dieser Kuchen ist ein echter Klassiker — saftig, aromatisch und mit einer Glasur die einfach unwiderstehlich ist. Perfekt für Kaffee und Kuchen am Nachmittag.</p><h3>Das Geheimnis der Saftigkeit</h3><p>Der Kuchen bleibt durch den hohen Butteranteil und den frischen Zitronensaft besonders saftig. Wichtig: Den Kuchen vollständig auskühlen lassen bevor die Glasur aufgetragen wird.</p>",
+  ingredients:["250 g Butter","250 g Zucker","4 Eier","300 g Mehl","2 TL Backpulver","4 EL Zitronensaft","100 ml Milch","150 g Puderzucker"],
+  steps:["Ofen auf 175°C vorheizen.","Butter und Zucker cremig schlagen.","Eier und Zitrone einrühren.","Mehl und Milch unterrühren.","45-50 Min backen, dann Glasur gießen."]},
+  {id:'s4',tag:"Hauptgerichte",title:"Quinoa-Salat mit Avocado",description:"Ein frischer und gesunder Salat der sättigt und begeistert. Perfekt als leichtes Mittagessen.",time:"15 Min",diff:"Einfach",portions:"2",fi:"fi-salad",emoji:"🥗",
+  content:"<h2>Gesund und sättigend</h2><p>Quinoa ist ein echtes Superfood — vollgepackt mit Proteinen, Ballaststoffen und wichtigen Aminosäuren. Kombiniert mit Avocado und frischem Gemüse entsteht ein Salat der wirklich sättigt.</p><blockquote>Quinoa sollte immer gut gewaschen werden, um den bitteren Geschmack der Saponine zu entfernen.</blockquote>",
+  ingredients:["200 g Quinoa","1 Avocado","200 g Kirschtomaten","1/2 Gurke","1 rote Zwiebel","Limette, Olivenöl, Koriander"],
+  steps:["Quinoa kochen und abkühlen.","Avocado und Gemüse schneiden.","Alles vermengen.","Mit Limette und Olivenöl würzen.","Mit Koriander garnieren."]},
+  {id:'s5',tag:"Frühstück",title:"Overnight Oats mit Beeren",description:"Das perfekte No-Cook Frühstück — abends vorbereiten, morgens genießen.",time:"5 Min",diff:"Sehr einfach",portions:"1",fi:"fi-oats",emoji:"🫐",
+  content:"<h2>Meal Prep für Frühaufsteher</h2><p>Overnight Oats sind die perfekte Lösung für busy mornings. Einfach abends vorbereiten und morgens direkt aus dem Kühlschrank genießen — kein Kochen notwendig.</p><h3>Variationen</h3><p>Die Grundversion lässt sich endlos variieren: Mit Schokostückchen, Nussbutter, exotischen Früchten oder verschiedenen Milchsorten.</p>",
+  ingredients:["80 g Haferflocken","200 ml Milch","2 EL Joghurt","1 EL Chiasamen","1 EL Honig","100 g Beeren"],
+  steps:["Alle Zutaten in einem Glas vermischen.","Über Nacht im Kühlschrank stehen lassen.","Morgens mit frischen Beeren toppen."]}
+];
+
+let allRecipes=[], currentFilter='all';
+
+async function loadRecipes(){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/recipes?order=created_at.desc`,{headers:H});
+    const data=r.ok?await r.json():[];
+    allRecipes=data.length?data:SAMPLE;
+  }catch{allRecipes=SAMPLE;}
+  renderHome(allRecipes);
+  renderSidebar();
+}
+
+// THUMB
+function thumb(r,size=40){
+  if(r.cover_image) return `<img src="${r.cover_image}" alt="${r.title}" loading="lazy">`;
+  return `<div class="fb ${r.fi||'fi-default'}" style="font-size:${size}px">${r.emoji||'🍽️'}</div>`;
+}
+
+function renderHome(list){
+  const el=document.getElementById('postsList');
+  if(!list.length){el.innerHTML='<div class="empty">Keine Rezepte gefunden.</div>';return;}
+  const [first,...rest]=list;
+  let html=`
+    <div class="featured-post" onclick="openPost('${first.id}')">
+      <div class="featured-thumb">${thumb(first,70)}</div>
+      <span class="featured-label">⭐ Empfehlung</span>
+      <div class="post-cat">${first.tag}</div>
+      <div class="post-title">${first.title}</div>
+      <div class="post-excerpt">${first.description||''}</div>
+      <div class="post-meta">
+        ${first.time?`<span>⏱ ${first.time}</span>`:''}
+        ${first.diff?`<span>📊 ${first.diff}</span>`:''}
+        ${first.portions?`<span>🍽 ${first.portions} Portionen</span>`:''}
+      </div>
+      <a class="read-more">Weiterlesen →</a>
+    </div>`;
+  html+=rest.map(r=>`
+    <div class="post-card">
+      <div class="post-thumb" onclick="openPost('${r.id}')">${thumb(r,38)}</div>
+      <div class="post-body">
+        <div class="post-cat" onclick="filterCat('${r.tag}')">${r.tag}</div>
+        <div class="post-title" onclick="openPost('${r.id}')">${r.title}</div>
+        <div class="post-excerpt">${r.description||''}</div>
+        <div class="post-meta">
+          ${r.time?`<span>⏱ ${r.time}</span>`:''}
+          ${r.diff?`<span>📊 ${r.diff}</span>`:''}
+        </div>
+        <a class="read-more" onclick="openPost('${r.id}')">Weiterlesen →</a>
+      </div>
+    </div>`).join('');
+  el.innerHTML=html;
+}
+
+function renderSidebar(){
+  // Categories
+  const cats=['Frühstück','Hauptgerichte','Desserts'];
+  document.getElementById('catWidget').innerHTML=cats.map(c=>{
+    const count=allRecipes.filter(r=>r.tag===c).length;
+    return `<div class="cat-widget-item" onclick="filterCat('${c}')"><span>${c}</span><span class="cat-widget-count">${count}</span></div>`;
+  }).join('');
+  // Recent
+  document.getElementById('recentWidget').innerHTML=allRecipes.slice(0,4).map(r=>`
+    <div class="recent-post" onclick="openPost('${r.id}')">
+      <div class="recent-thumb">${thumb(r,20)}</div>
+      <div class="recent-info">
+        <div class="recent-title">${r.title}</div>
+        <div class="recent-meta">${r.tag} · ${r.time||''}</div>
+      </div>
+    </div>`).join('');
+  // Counts
+  document.getElementById('cntFr').textContent=`(${allRecipes.filter(r=>r.tag==='Frühstück').length})`;
+  document.getElementById('cntHa').textContent=`(${allRecipes.filter(r=>r.tag==='Hauptgerichte').length})`;
+  document.getElementById('cntDe').textContent=`(${allRecipes.filter(r=>r.tag==='Desserts').length})`;
+}
+
+function openPost(id){
+  const r=allRecipes.find(x=>x.id==id);if(!r)return;
+  const ings=Array.isArray(r.ingredients)?r.ingredients:[];
+  const steps=Array.isArray(r.steps)?r.steps:[];
+  const hasRecipe=ings.length||steps.length;
+  document.getElementById('singleContent').innerHTML=`
+    <div class="breadcrumb"><a onclick="goHome()">Startseite</a> › <a onclick="filterCat('${r.tag}')">${r.tag}</a> › ${r.title}</div>
+    <div class="single-cat">${r.tag}</div>
+    <h1 class="single-title">${r.title}</h1>
+    <div class="single-meta">
+      ${r.time?`<span>⏱ ${r.time}</span>`:''}
+      ${r.diff?`<span>📊 ${r.diff}</span>`:''}
+      ${r.portions?`<span>🍽 ${r.portions} Portionen</span>`:''}
+    </div>
+    <div class="single-cover">${thumb(r,90)}</div>
+    ${hasRecipe?`
+    <div class="recipe-box">
+      <div class="recipe-box-title">📋 Rezept auf einen Blick</div>
+      <div class="recipe-stats">
+        <div class="recipe-stat"><div class="recipe-stat-num">${r.time||'?'}</div><div class="recipe-stat-label">Zeit</div></div>
+        <div class="recipe-stat"><div class="recipe-stat-num">${r.diff||'?'}</div><div class="recipe-stat-label">Schwierigkeit</div></div>
+        <div class="recipe-stat"><div class="recipe-stat-num">${r.portions||'?'}</div><div class="recipe-stat-label">Portionen</div></div>
+      </div>
+      <div class="recipe-cols">
+        <div>
+          <h3>Zutaten</h3>
+          <ul class="ing-list">${ings.map(i=>`<li>${i}</li>`).join('')}</ul>
+        </div>
+        <div>
+          <h3>Zubereitung</h3>
+          <ol class="step-list">${steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+        </div>
+      </div>
+    </div>`:''}
+    <div class="entry-content">${r.content||`<p>${r.description||''}</p>`}</div>`;
+
+  // Single sidebar recent
+  document.getElementById('singleRecent').innerHTML=allRecipes.filter(x=>x.id!=id).slice(0,4).map(r=>`
+    <div class="recent-post" onclick="openPost('${r.id}')">
+      <div class="recent-thumb">${thumb(r,20)}</div>
+      <div class="recent-info">
+        <div class="recent-title">${r.title}</div>
+        <div class="recent-meta">${r.tag} · ${r.time||''}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('pgHome').style.display='none';
+  document.getElementById('pgSingle').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function goHome(){
+  document.getElementById('pgHome').style.display='';
+  document.getElementById('pgSingle').style.display='none';
+  document.getElementById('postsTitle').textContent='Neueste Rezepte';
+  document.getElementById('showAllLink').style.display='none';
+  document.getElementById('searchInput').value='';
+  renderHome(allRecipes);
+  setActiveNav('navAll');
+  window.scrollTo(0,0);
+}
+
+function filterCat(cat){
+  goHome();
+  const filtered=allRecipes.filter(r=>r.tag===cat);
+  renderHome(filtered);
+  document.getElementById('postsTitle').textContent=cat;
+  document.getElementById('showAllLink').style.display='inline';
+  setActiveNav(cat==='Frühstück'?'navFr':cat==='Hauptgerichte'?'navHa':'navDe');
+  document.getElementById('mainContent').scrollIntoView({behavior:'smooth'});
+}
+
+function handleSearch(val){
+  if(!val){renderHome(allRecipes);document.getElementById('postsTitle').textContent='Neueste Rezepte';document.getElementById('showAllLink').style.display='none';return;}
+  const q=val.toLowerCase();
+  const res=allRecipes.filter(r=>r.title.toLowerCase().includes(q)||r.tag.toLowerCase().includes(q)||(r.description||'').toLowerCase().includes(q));
+  renderHome(res);
+  document.getElementById('postsTitle').textContent=`Suchergebnisse: "${val}"`;
+  document.getElementById('showAllLink').style.display='inline';
+}
+
+function setActiveNav(id){
+  document.querySelectorAll('.main-nav a').forEach(a=>a.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+loadRecipes();
+</script>
+</body>
+</html>
